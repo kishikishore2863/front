@@ -22,9 +22,9 @@ export default function POILayer({ data, idPrefix = 'main' }) {
         source: sourceId,
         paint: {
           'circle-radius': 5,
-          'circle-color': '#007aff',
+          'circle-color': '#22c55e',
           'circle-stroke-width': 1,
-          'circle-stroke-color': '#ffffff',
+          'circle-stroke-color': '#22c55e',
         },
       });
     } else {
