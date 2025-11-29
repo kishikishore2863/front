@@ -7,6 +7,7 @@ import CategorySelect from '@/components/ui/CategorySelect';
 import PrioritySliders from '@/components/ui/PrioritySliders';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Clock, Footprints, Car } from 'lucide-react';
+import LocationName from "@/components/map/LocationName";
 
 export default function Sidebar() {
   const { filters, setFilters, mode } = useAppContext();
@@ -25,12 +26,12 @@ export default function Sidebar() {
 
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-8">
-          
+           <LocationName />
           <section className="space-y-4">
             <h2 className="text-sm font-semibold text-foreground">Target Location</h2>
             <AddressInput />
             
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
                <label className="text-sm font-medium">Transport Mode</label>
                <Tabs 
                  value={filters.transport} 
@@ -42,9 +43,9 @@ export default function Sidebar() {
                    <TabsTrigger value="driving"><Car className="w-4 h-4 mr-2"/> Driving</TabsTrigger>
                  </TabsList>
                </Tabs>
-            </div>
+            </div> */}
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <label className="text-sm font-medium flex justify-between">
                 Time Budget
                 <span className="text-muted-foreground font-normal">{filters.timeBudget} min</span>
@@ -58,7 +59,7 @@ export default function Sidebar() {
                 value={filters.timeBudget}
                 onChange={(e) => setFilters(prev => ({...prev, timeBudget: parseInt(e.target.value)}))}
               />
-            </div>
+            </div> */}
           </section>
 
           <Separator />
@@ -66,7 +67,7 @@ export default function Sidebar() {
           <section className="space-y-4">
             <h2 className="text-sm font-semibold text-foreground">Market Analysis</h2>
             <CategorySelect />
-            <PrioritySliders />
+            {/* <PrioritySliders /> */}
           </section>
 
         </div>
