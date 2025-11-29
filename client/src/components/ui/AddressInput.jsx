@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2 } from 'lucide-react';
 
 const AUTOCOMPLETE_DELAY_MS = 350;
+const DEFAULT_ORIGIN = { lat: 12.9716, lng: 77.5946 };
 
 const parseNumber = (value) => {
   if (typeof value === 'number' && Number.isFinite(value)) return value;
@@ -87,7 +88,7 @@ export default function AddressInput({
   placeholder = 'Search location...',
   onSearch,
   onSelect,
-  locationBias = 'Karnataka',
+  searchOrigin,
 }) {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -96,6 +97,24 @@ export default function AddressInput({
   const [error, setError] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
+  const resolvedCacheRef = useRef(new Map());
+
+  const origin = useMemo(() => {
+    const lat =
+      parseNumber(searchOrigin?.lat) ??
+      parseNumber(searchOrigin?.latitude) ??
+      parseNumber(searchOrigin?.center?.lat);
+    const lng =
+      parseNumber(searchOrigin?.lng) ??
+      parseNumber(searchOrigin?.lon) ??
+      parseNumber(searchOrigin?.longitude) ??
+      parseNumber(searchOrigin?.center?.lng);
+
+    return {
+      lat: Number.isFinite(lat) ? lat : DEFAULT_ORIGIN.lat,
+      lng: Number.isFinite(lng) ? lng : DEFAULT_ORIGIN.lng,
+    };
+  }, [searchOrigin]);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -113,12 +132,13 @@ export default function AddressInput({
 
     const timeoutId = window.setTimeout(async () => {
       try {
-        const params = new URLSearchParams({ query: query.trim() });
-        if (locationBias) {
-          params.append('location_bias', locationBias);
-        }
+        const params = new URLSearchParams({
+          query: query.trim(),
+          latitude: String(origin.lat),
+          longitude: String(origin.lng),
+        });
 
-        const response = await fetch(`/api/autocomplete?${params.toString()}`, {
+        const response = await fetch(`/api/autosuggest?${params.toString()}`, {
           signal: controller.signal,
         });
 
@@ -135,7 +155,17 @@ export default function AddressInput({
           [];
 
         const normalized = rawSuggestions
-          .map((item, index) => normalizeSuggestion(item, index))
+          .map((item, index) => {
+            const result = normalizeSuggestion(item, index);
+            if (!Number.isFinite(result.lat) || !Number.isFinite(result.lng)) {
+              const cached = resolvedCacheRef.current.get(result.id);
+              if (cached) {
+                result.lat = cached.lat;
+                result.lng = cached.lng;
+              }
+            }
+            return result;
+          })
           .filter((item) => Boolean(item.label));
 
         if (!active) return;
@@ -159,7 +189,7 @@ export default function AddressInput({
       controller.abort();
       window.clearTimeout(timeoutId);
     };
-  }, [query, locationBias]);
+  }, [query, origin.lat, origin.lng]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -203,6 +233,8 @@ export default function AddressInput({
 
       const candidates = Array.isArray(payload?.data)
         ? payload.data
+        : payload?.data && typeof payload.data === 'object'
+        ? [payload.data]
         : Array.isArray(payload?.results)
         ? payload.results
         : Array.isArray(payload?.suggestions)
@@ -230,6 +262,14 @@ export default function AddressInput({
           parseNumber(candidate?.geometry?.lon);
 
         if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          resolvedCacheRef.current.set(suggestion.id, { lat, lng });
+          setSuggestions((prev) =>
+            prev.map((item) =>
+              item.id === suggestion.id
+                ? { ...item, lat, lng }
+                : item
+            )
+          );
           return { lat, lng };
         }
       }
