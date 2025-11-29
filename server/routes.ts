@@ -250,15 +250,16 @@ export async function registerRoutes(
     console.log("API",process.env.LATLONG_API_KEY);
     const { lat ,lon} = req.query;
 
-    if (!lat && !lon) {
+    if (!lat || !lon) {
         return res.status(400).json({ error: "Query 'address' is required" });
     }
 
     try {
-        const response = await axios.get("https://apihub.latlong.ai/v4/reverse_geocode", {
+        const response = await axios.get("https://apihub.latlong.ai/v4/reverse_geocode.json", {
             params: {
-                lat: lat,
-                lon: lon
+                latitude: lat,
+                longitude: lon,
+  
             },
             headers: {
                  'X-Authorization-Token': process.env.LATLONG_API_KEY
@@ -269,7 +270,7 @@ export async function registerRoutes(
         res.json(response.data);
 
     } catch (error: any) {
-        console.error("API Error:", error.response?.data || error.message);
+        console.error("API Error for address:", error.response?.data || error.message);
         res.status(500).json({ error: "Failed to fetch geocode data" });
     }
 });
