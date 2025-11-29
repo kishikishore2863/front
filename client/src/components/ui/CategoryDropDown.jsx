@@ -1,0 +1,58 @@
+import React from "react";
+import { useAppContext } from "@/context/AppContext";
+import { Label } from "@/components/ui/label";
+
+// Combined category list
+const CATEGORY_OPTIONS = [
+  { label: "Cafe", value: "amenity=cafe" },
+  { label: "Restaurant", value: "amenity=restaurant" },
+  { label: "Bank", value: "amenity=bank" },
+  { label: "School", value: "amenity=school" },
+  { label: "Hospital", value: "amenity=hospital" },
+  { label: "Bar", value: "amenity=bar" },
+  { label: "Bakery", value: "shop=bakery" },
+  { label: "Grocery", value: "shop=grocery" },
+  { label: "Supermarket", value: "shop=supermarket" },
+  { label: "Clothes", value: "shop=clothes" },
+  { label: "Electronics", value: "shop=electronics" },
+  { label: "Convenience Store", value: "shop=convenience" }
+];
+
+export default function CategoryDropDown({ onChange } = {}) {
+  const { selectedCategories, setSelectedCategories, setNearbyRefreshTick } =
+    useAppContext();
+
+  const selected = selectedCategories[0] || "";
+
+  const handleSelect = (e) => {
+    const newValue = e.target.value;
+
+    setSelectedCategories([newValue]); // only ONE category
+
+    if (typeof onChange === "function") {
+      onChange([newValue]); // always array for compatibility
+    }
+
+    setNearbyRefreshTick((t) => (t || 0) + 1); // refresh map
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label>Select Category</Label>
+
+      <select
+        value={selected}
+        onChange={handleSelect}
+        className="w-full p-2 border rounded-md bg-white"
+      >
+        <option value="">-- Select Category --</option>
+
+        {CATEGORY_OPTIONS.map((cat) => (
+          <option key={cat.value} value={cat.value}>
+            {cat.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}

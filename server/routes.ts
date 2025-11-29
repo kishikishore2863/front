@@ -308,7 +308,7 @@ export async function registerRoutes(
             ...(location_bias ? { location_bias } : {}),
           },
           headers: {
-            "X-Authorization-Token": apiKey,
+            "X-Authorization-Token": process.env.LATLONG_API_KEY,
           },
         }
       );
@@ -374,10 +374,10 @@ export async function registerRoutes(
           params: {
             latitude,
             longitude,
-            ...(typeof details === "boolean" ? { details } : {}),
+            details: "false",
           },
           headers: {
-            "X-Authorization-Token": apiKey,
+            "X-Authorization-Token": process.env.LATLONG_API_KEY,
           },
         }
       );
@@ -501,5 +501,201 @@ export async function registerRoutes(
     }
   });
 
+
+
+// app.post('/api/targeted-ads', async (req: Request, res: Response) => {
+//   try {
+//     const { latitude, longitude, interests } = (req.body as any) || {};
+
+//     if (!latitude || !longitude) {
+//       return res.status(400).json({ error: "latitude and longitude required" });
+//     }
+
+//     if (!Array.isArray(interests) || interests.length === 0) {
+//       return res.status(400).json({ error: "interests must be a non-empty array" });
+//     }
+
+//     const radius = 2000;
+
+//     // Build interest query
+//     const filterQuery = interests
+//       .map((item) => {
+//         const [key, value] = item.split("=");
+//         return `
+//           node["${key}"="${value}"](around:${radius},${latitude},${longitude});
+//           way["${key}"="${value}"](around:${radius},${latitude},${longitude});
+//           relation["${key}"="${value}"](around:${radius},${latitude},${longitude});
+//         `;
+//       })
+//       .join("\n");
+
+//     const query = `
+//       [out:json][timeout:25];
+//       (
+//         ${filterQuery}
+//       );
+//       out center meta;
+//     `;
+
+//     const response = await axios.post(
+//       "https://overpass-api.de/api/interpreter",
+//       query,
+//       { headers: { "Content-Type": "text/plain" } }
+//     );
+
+//     const results = [];
+//     const seen = new Set();
+
+//     // haversine distance (KM)
+//     const distanceKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+//       const R = 6371;
+//       const dLat = (lat2 - lat1) * Math.PI / 180;
+//       const dLon = (lon2 - lon1) * Math.PI / 180;
+//       const a =
+//         Math.sin(dLat / 2) ** 2 +
+//         Math.cos(lat1 * Math.PI / 180) *
+//           Math.cos(lat2 * Math.PI / 180) *
+//           Math.sin(dLon / 2) ** 2;
+
+//       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//     };
+
+//     // Collect POIs
+//     for (const el of response.data.elements) {
+//       const lat = el.lat || el.center?.lat;
+//       const lon = el.lon || el.center?.lon;
+//       if (!lat || !lon) continue;
+
+//       const idKey = `${el.type}-${el.id}`;
+//       if (seen.has(idKey)) continue;
+//       seen.add(idKey);
+
+//       const category =
+//         el.tags?.amenity ||
+//         el.tags?.shop ||
+//         el.tags?.leisure ||
+//         el.tags?.building ||
+//         "unknown";
+
+//       results.push({
+//         id: el.id,
+//         name: el.tags?.name || "Unknown",
+//         category,
+//         latitude: lat,
+//         longitude: lon,
+//         distance: distanceKm(latitude, longitude, lat, lon),
+//         tags: el.tags || {},
+//       });
+//     }
+
+//     // Group by category → choose nearest item in each group
+//     const nearestByCategory: Record<string, any> = {};
+
+//     for (const item of results) {
+//       const cat = item.category;
+//       if (!nearestByCategory[cat]) {
+//           nearestByCategory[cat] = item;
+//       } else if (item.distance < nearestByCategory[cat].distance) {
+//           nearestByCategory[cat] = item;
+//       }
+//     }
+
+//     // Final output list
+//     const finalResults = Object.values(nearestByCategory);
+
+//     return res.json({
+//       count: finalResults.length,
+//       results: finalResults,
+//     });
+
+//   } catch (error: any) {
+//     console.error(error);
+//     res.status(500).json({
+//       error: "Server error",
+//       details: error.message,
+//     });
+//   }
+// });
+
+
+  app.post("/api/targeted-ads", async (req: Request, res: Response) => {
+    try {
+      const { latitude, longitude, categories } = (req.body as any) || {};
+
+      if (!latitude || !longitude) {
+        return res
+          .status(400)
+          .json({ error: "latitude and longitude required" });
+      }
+
+      if (!Array.isArray(categories) || categories.length === 0) {
+        return res
+          .status(400)
+          .json({ error: "categories must be a non-empty array" });
+      }
+
+      const radius = 2000;
+
+      // Build dynamic Overpass filters from user input
+      const filterQuery = categories
+        .map((item) => {
+          if (!item.includes("=")) return ""; // skip invalid format
+          const [key, value] = item.split("=");
+          return `
+            node["${key}"="${value}"](around:${radius},${latitude},${longitude});
+            way["${key}"="${value}"](around:${radius},${latitude},${longitude});
+            relation["${key}"="${value}"](around:${radius},${latitude},${longitude});
+          `;
+        })
+        .join("\n");
+
+      const query = `
+        [out:json][timeout:25];
+        (
+          ${filterQuery}
+        );
+        out center meta;
+      `;
+
+      const response = await axios.post(
+        "https://overpass-api.de/api/interpreter",
+        query,
+        { headers: { "Content-Type": "text/plain" } }
+      );
+
+      const results = [];
+      const seen = new Set();
+
+      for (const el of response.data.elements) {
+        const lat = el.lat || el.center?.lat;
+        const lon = el.lon || el.center?.lon;
+        if (!lat || !lon) continue;
+
+        const idKey = `${el.type}-${el.id}`;
+        if (seen.has(idKey)) continue;
+        seen.add(idKey);
+
+        results.push({
+          id: el.id,
+          name: el.tags?.name || "Unknown",
+          category: el.tags?.amenity || el.tags?.shop || "unknown",
+          latitude: lat,
+          longitude: lon,
+          tags: el.tags || {},
+        });
+      }
+
+      res.json({
+        count: results.length,
+        results,
+      });
+    } catch (error: any) {
+      console.error(error);
+      res.status(500).json({
+        error: "Server error",
+        details: error.message,
+      });
+    }
+  });
   return httpServer;
 }

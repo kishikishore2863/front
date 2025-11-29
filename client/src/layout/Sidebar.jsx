@@ -8,6 +8,7 @@ import PrioritySliders from '@/components/ui/PrioritySliders';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Clock, Footprints, Car } from 'lucide-react';
 import LocationName from "@/components/map/LocationName";
+import CategoryDropDown from '../components/ui/CategoryDropDown';
 
 export default function Sidebar() {
   const { filters, setFilters, mode, setSelectedLocation, selectedLocation } = useAppContext();
@@ -77,6 +78,7 @@ export default function Sidebar() {
 
           <section className="space-y-4">
             <h2 className="text-sm font-semibold text-foreground">Market Analysis</h2>
+            <CategoryDropDown />
             <CategorySelect />
             {/* <PrioritySliders /> */}
           </section>
