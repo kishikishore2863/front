@@ -458,6 +458,79 @@ export async function registerRoutes(
     }
   });
 
+  // Simple echo endpoint
+  app.post("/api/echo", (req: Request, res: Response) => {
+    const schema = z.object({
+      text: z.string().min(1, "text is required"),
+    });
+
+    const parseResult = schema.safeParse(req.body);
+    if (!parseResult.success) {
+      const [{ message }] = parseResult.error.errors;
+      return res.status(400).json({ error: message });
+    }
+
+    const { text } = parseResult.data;
+    res.json({ text });
+  });
+
+  app.post("/api/gemini", async (req: Request, res: Response) => {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.error("GEMINI_API_KEY is not set");
+      return res.status(500).json({ error: "Server configuration error" });
+    }
+
+    const schema = z.object({
+      text: z.string().min(1, "text is required"),
+    });
+
+    const parseResult = schema.safeParse(req.body);
+    if (!parseResult.success) {
+      const [{ message }] = parseResult.error.errors;
+      return res.status(400).json({ error: message });
+    }
+
+    const { text } = parseResult.data;
+
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      const response = await axios.post(url, {
+        contents: [
+          {
+            role: "user",
+            parts: [{ text }],
+          },
+        ],
+      });
+
+      const reply =
+        response.data?.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
+
+      if (!reply) {
+        console.error("Gemini response missing text", response.data);
+        return res
+          .status(502)
+          .json({ error: "Gemini API did not return any content" });
+      }
+
+      res.json({ text: reply });
+    } catch (error: any) {
+      console.error(
+        "Gemini API Error:",
+        error.response?.data || error.message || error
+      );
+
+      const status = error.response?.status || 500;
+      const message =
+        error.response?.data?.error?.message ||
+        error.response?.data?.message ||
+        "Failed to fetch response from Gemini";
+
+      res.status(status).json({ error: message });
+    }
+  });
+
   // Geocode proxy endpoint
   // Example: GET /codes?address=1600+Amphitheatre+Parkway
   app.get('/codes', async (req: Request, res: Response) => {
