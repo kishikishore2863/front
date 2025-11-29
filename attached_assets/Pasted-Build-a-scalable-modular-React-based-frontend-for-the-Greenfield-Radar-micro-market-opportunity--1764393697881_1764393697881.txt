@@ -1,0 +1,429 @@
+Build a scalable, modular, React-based frontend for the “Greenfield Radar” micro-market opportunity detection system.
+The frontend must render interactive maps, isochrone boundaries, heatmaps, micro-tiles, POI icons, and comparison views.
+Focus on clean architecture, reusable components, well-organized state management, and extensible UI.
+
+This is the base version, but designed so features can be added later without refactoring.
+
+🎯 CORE FRONTEND GOALS:
+
+Clean folder structure
+
+Proper component separation
+
+Easy integration with backend API endpoints
+
+Highly modular map components
+
+Heatmap + geojson layer rendering
+
+Support for dynamic priorities (sliders)
+
+Support for compare-two-locations mode
+
+Flexible theme + responsive UI
+
+Expandable for future AI features, persona tags, multi-layer toggles
+
+🧱 FRONTEND TECH STACK (Must Use):
+
+React.js
+
+MapLibre GL JS
+
+OpenMapTiles (vector tiles)
+
+Turf.js (client-side geometry)
+
+React Query (fetch + cache)
+
+TailwindCSS (UI styling)
+
+Axios or fetch for API calls
+
+Do not use Mapbox. MapLibregl + OpenMapTiles must be used.
+
+📁 FOLDER STRUCTURE (MANDATORY)
+src/
+│
+├── components/
+│   ├── map/
+│   │   ├── MapContainer.jsx
+│   │   ├── TileHeatmapLayer.jsx
+│   │   ├── TilePolygonLayer.jsx
+│   │   ├── IsochroneLayer.jsx
+│   │   ├── POILayer.jsx
+│   │   ├── SelectedPinMarker.jsx
+│   │   ├── CompareModeLayer.jsx
+│   │
+│   ├── ui/
+│   │   ├── AddressInput.jsx
+│   │   ├── LatLngInput.jsx
+│   │   ├── PrioritySliders.jsx
+│   │   ├── CategorySelect.jsx
+│   │   ├── SummaryCard.jsx
+│   │   ├── ComparePanel.jsx
+│   │   ├── Loader.jsx
+│   │
+│   ├── layout/
+│   │   ├── Sidebar.jsx
+│   │   ├── Toolbar.jsx
+│   │
+│   └── common/
+│       ├── Button.jsx
+│       ├── Card.jsx
+│       └── Modal.jsx
+│
+├── hooks/
+│   ├── useScoreLocation.js
+│   ├── useCompareLocations.js
+│   ├── useDebounce.js
+│
+├── services/
+│   ├── api.js
+│   ├── maplibre.js
+│
+├── context/
+│   ├── AppContext.jsx
+│   ├── MapContext.jsx
+│
+├── styles/
+│   └── globals.css
+│
+└── App.jsx
+
+🗺 MAP SYSTEM REQUIREMENTS
+
+The MapLibre map MUST support:
+
+1. Base tiles
+
+Use OpenMapTiles vector style
+
+Load via MapLibre GL
+
+2. Layers to Implement
+
+Isochrone polygon layer
+
+Micro-tile heatmap layer
+
+Micro-tile outline layer
+
+POI icon layer
+
+User pin marker
+
+Compare-mode dual pin & heatmap layer
+
+Hover tooltip (tile score)
+
+3. Map Interactions
+
+Click-to-drop pin
+
+Hover tile → show score preview
+
+Zoom in/out smoothly
+
+Layer toggles ready for future updates
+
+🔥 FRONTEND FEATURES TO IMPLEMENT NOW
+
+(Agent must build these exactly.)
+
+1. Home Layout
+
+Consists of:
+
+A. Left Sidebar
+
+Address input
+
+OR Lat/Long coordinate input
+
+Mode selector: Walking / Driving
+
+Time budget input (e.g., 10 mins)
+
+Category selector (competitor type)
+
+Priority sliders:
+
+Competition
+
+Footfall
+
+Amenities
+
+B. Main Map Area
+
+MapLibre GL map
+
+Isochrone area shading
+
+Heatmap of tile scores
+
+Top 3 highlighted tiles
+
+POIs inside catchment
+
+Tile hover tooltip
+
+C. Right Summary Panel
+
+Location Score (0–100)
+
+Top 3 tile cards
+
+Key reasons
+
+Export PDF button
+
+Switch to Compare Mode
+
+2. Compare Mode
+
+New UI state:
+
+Left Pane
+
+Location A input
+
+Location B input
+
+Map
+
+Two pins (A and B)
+
+Two isochrones
+
+Two heatmaps
+
+Sync view & zoom
+
+Right Pane
+
+Comparison metrics:
+
+Score A vs Score B
+
+Competition delta
+
+Amenity delta
+
+Transit delta
+
+Which tile wins?
+
+Persona tags
+
+3. Priority Sliders
+
+3 sliders that control weights:
+
+0 → weight = 0
+
+50 → weight = default
+
+100 → weight = 2×
+
+Frontend must:
+
+Show real-time effect
+
+Send updated priorities to backend
+
+4. API Integration
+
+Use React Query for:
+
+A. Score location
+
+POST /api/score-location
+
+Fetch isochrone
+
+Fetch tiles
+
+Fetch heatmap
+
+Fetch POIs
+
+B. Compare locations
+
+POST /api/compare
+
+5. Components that Must be Modular
+MapContainer.jsx
+
+Initializes map
+
+Loads OpenMapTiles style
+
+Registers layers
+
+TileHeatmapLayer.jsx
+
+Takes GeoJSON heatmap
+
+Renders using MapLibre heat layer
+
+Color ramp from blue → green → yellow → red
+
+TilePolygonLayer.jsx
+
+Renders tile boundaries
+
+Shows selected tile outline
+
+IsochroneLayer.jsx
+
+Renders catchment polygon
+
+Semi-transparent fill
+
+POILayer.jsx
+
+Different icons for:
+
+Competitors
+
+Amenities
+
+Transit
+
+Business relevant POI
+
+SelectedPinMarker.jsx
+
+Shows dropped pin
+
+⚒️ REACT STATE MANAGEMENT RULES
+
+Keep global state light
+
+Store only:
+
+active pin
+
+isochrone
+
+tile data
+
+POIs
+
+sliders (priorities)
+
+compare mode active/not
+
+Use:
+
+React Context
+
+React Query (cache API results)
+
+🎨 UI DESIGN GUIDELINES
+
+Minimal
+
+Clean
+
+High-contrast map-first layout
+
+Light background + map pop
+
+Large cards for scores (inspired by your PDF visuals)
+
+
+Location_Scoring_Decisive_Insig…
+
+Use:
+
+Rounded cards
+
+Smooth transitions
+
+Shimmer loading states
+
+🧩 UPGRADE-READY ARCHITECTURE — MUST FOLLOW
+
+Make frontend highly modular to support future upgrades:
+
+Future planned features:
+
+Tile personas
+
+Layer toggles (competition heatmap / footfall heatmap / amenities heatmap)
+
+AI text explanation
+
+Camera-based street scan mode
+
+Footfall predictions
+
+Saved locations
+
+User accounts
+
+Multi-city selector
+
+Frontend architecture must not block future features.
+
+🧪 TESTING BEHAVIOR FOR AI AGENT
+
+You must ensure:
+
+All map layers load without errors
+
+Vector tiles render correctly
+
+Heatmap responds to updated score data
+
+Tile hover works reliably
+
+Compare mode does not leak state
+
+Sliders update priority weights correctly
+
+📜 DELIVERABLES (Agent Must Output)
+
+Full React project structure
+
+Implemented MapLibre + OpenMapTiles setup
+
+Components as defined above
+
+API service functions for interact
+
+Utility hooks for scoring APIs
+
+Clean Tailwind-based UI
+
+Compare mode UI + state
+
+Loading screens + skeletons
+
+Tooltip & tile hover system
+
+Base error handling UI
+
+🏁 FINAL INSTRUCTIONS TO THE AI AGENT
+
+Build the frontend exactly as described above.
+Focus on:
+
+Professional architecture
+
+Clean component boundaries
+
+Highly modular map layers
+
+Upgrade-friendly design
+
+Zero code duplication
+
+Commented and readable refs
+
+Do NOT implement backend.
+Do NOT implement scoring logic.
+This is frontend-only.

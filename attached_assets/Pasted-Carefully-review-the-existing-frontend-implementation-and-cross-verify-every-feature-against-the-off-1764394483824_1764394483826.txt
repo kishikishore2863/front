@@ -1,0 +1,265 @@
+Carefully review the existing frontend implementation and cross-verify every feature against the official Greenfield Radar specification.
+Use the uploaded document titled “Greenfield Radar.docx” as the base specification. 
+
+Greenfield Radar
+
+
+Also reference the micro-tile scoring visuals and UI behavior shown in the uploaded PDF. 
+
+Location_Scoring_Decisive_Insig…
+
+This is a frontend-only validation.
+Ignore backend/scoring logic — focus ONLY on UI, map behavior, and user interaction.
+
+✅ 1. Verify All Required UI Components Exist
+
+Cross-check that all components required by the project spec are present and implemented:
+
+A. INPUT PANEL (Left Sidebar)
+
+The document requires the frontend to support:
+
+Search bar (address input)
+
+Drop pin / choose location
+
+Transport mode (Walking / Driving)
+
+Time Budget slider
+
+Business Category selector (“Coffee Shop”, etc.)
+
+Priority sliders:
+
+Competition
+
+Footfall
+
+Amenities
+
+Version label (v1.0.0 or similar)
+
+Verify if all these exist & work.
+Check design consistency with spec and image.
+
+✅ 2. Map System Verification
+
+Verify the map behaves EXACTLY as required in the document.
+
+The frontend must have:
+
+A. Map Rendering
+
+MapLibre GL map
+
+OpenMapTiles vector tiles as basemap
+
+Smooth panning & zoom
+
+B. Catchment Visualization
+
+Isochrone shape OR radius area (blue outline as shown)
+
+Transparent fill
+
+C. POI Icons
+
+POIs for competitors, amenities, transit must appear on the map exactly like the spec indicates.
+
+D. Dynamic Layers
+
+Verify layers exist for:
+
+Heatmap (tile intensity visualization)
+
+Tile outlines
+
+Top 3 tile highlights
+
+POI markers
+
+User pin
+
+E. Interactivity
+
+Hover on tile → show score preview
+
+Click on map → update selected location
+
+Map adjusts automatically after scoring
+
+✅ 3. Score Panel Verification (Right Side Panel)
+
+Verify the right-hand LOCATION SCORE panel matches the spec.
+
+It should include:
+
+Total Location Score (0–100)
+
+Top 3 micro-tiles with scores
+
+Colors similar to official design
+
+“Compare Location” button
+
+Download / export icon
+
+The document explicitly shows these elements.
+Cross-check against the uploaded screenshot you provided.
+
+✅ 4. PRIORITY SLIDER SYSTEM CHECK
+
+The doc requires that priority sliders adjust scoring weights.
+
+Frontend must have:
+
+Competition slider
+
+Footfall slider
+
+Amenities slider
+
+Check:
+
+Sliders visually exist
+
+They send correct values to backend
+
+UI updates live
+
+Values are displayed clearly (e.g., 77%)
+
+✅ 5. Compare Mode Verification
+
+Document requires:
+
+A mode to compare two locations
+
+Button “Compare Location”
+
+Dual heatmap or side-by-side view
+
+Verify:
+
+The button exists
+
+Compare-mode UI is implemented
+
+Compare panel layout is correct
+
+Compare interaction flow works
+
+If compare mode is missing, flag it.
+
+✅ 6. Feature-by-Feature Cross-Verification with the Official Spec
+
+Go through each requirement from the uploaded project document and confirm if the frontend meets it:
+
+MVP Requirements (as per doc) 
+
+Greenfield Radar
+
+Map UI + ability to drop pin
+
+Isochrone or radius catchment
+
+Display nearby POIs
+
+Competitor heatmap
+
+Micro-tile scoring visualization
+
+Top 3 tiles visible
+
+Summary card with reasons
+
+Verify each one individually.
+
+✅ 7. Heatmap Behavior Verification
+
+Based on the micro-tile scoring PDF, verify:
+
+Heatmap intensity correlates with tile scores
+
+Gradient matches system design (green → red)
+
+Tiles reflect micro-grid scoring
+
+Top tile visually highlighted
+
+Use the example visual reference from page 6–9. 
+
+Location_Scoring_Decisive_Insig…
+
+✅ 8. UI Style & Layout Audit
+
+Verify that the frontend follows these styling rules from the document:
+
+Clean dark sidebar
+
+Bright, high-contrast map
+
+Modern minimal card components
+
+Smooth transitions
+
+Rounded corners
+
+Proper spacing and typography hierarchy
+
+This matches the visual language shown in your screenshot.
+
+✅ 9. Error Handling Verification
+
+Verify the frontend correctly handles:
+
+Invalid address
+
+No POIs found
+
+API timeout
+
+Empty score results
+
+Map load failure
+
+Slider error states
+
+If missing, mark as TODO.
+
+✅ 10. Upgrade Readiness Check
+
+The agent must evaluate whether the architecture is modular and ready for future upgrades such as:
+
+Multi-layer toggles (competition, footfall, amenity heatmaps)
+
+Persona scoring tags
+
+Historical POI caching
+
+Camera-based street scanning UI
+
+Multi-location comparison
+
+PDF export visualization
+
+Flag any parts of the UI structure that may block future upgrades.
+
+👉 FINAL INSTRUCTION FOR YOUR AI AGENT
+
+Perform a deep verification of the frontend against ALL the above checkpoints.
+Output:
+
+A Pass/Fail for each category
+
+A list of missing features
+
+A list of UI improvements required
+
+A list of bugs or inconsistencies
+
+A list of recommended upgrades
+
+A final overall compliance score (0–100)
+
+A next-steps implementation roadmap

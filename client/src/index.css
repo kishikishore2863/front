@@ -1,0 +1,66 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --color-background: hsl(220 14% 96%);
+  --color-foreground: hsl(220 10% 10%);
+  
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(220 10% 10%);
+  
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(220 10% 10%);
+  
+  --color-primary: hsl(220 90% 50%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  
+  --color-secondary: hsl(220 10% 90%);
+  --color-secondary-foreground: hsl(220 10% 10%);
+  
+  --color-muted: hsl(220 10% 90%);
+  --color-muted-foreground: hsl(220 10% 40%);
+  
+  --color-accent: hsl(220 20% 94%);
+  --color-accent-foreground: hsl(220 10% 10%);
+  
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(0 0% 98%);
+
+  --color-border: hsl(220 10% 90%);
+  --color-input: hsl(220 10% 90%);
+  --color-ring: hsl(220 90% 50%);
+
+  /* Compatibility variables for existing components */
+  --color-primary-border: hsl(220 90% 50%);
+  --color-secondary-border: hsl(220 10% 80%);
+  --color-accent-border: hsl(220 20% 90%);
+  --color-destructive-border: hsl(0 84% 60%);
+  --color-muted-border: hsl(220 10% 85%);
+  
+  --radius: 0.5rem;
+  
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Utility classes for map */
+.maplibregl-map {
+  font-family: inherit;
+}
+
+.maplibregl-popup-content {
+  @apply rounded-lg shadow-lg border border-border p-0 overflow-hidden font-sans;
+}
+
+.maplibregl-popup-close-button {
+  @apply px-2 py-1 text-muted-foreground hover:text-foreground focus:outline-none;
+}

@@ -1,0 +1,226 @@
+Convert the entire Greenfield Radar frontend project from TypeScript to pure JavaScript (ES6+) while keeping the entire architecture, logic, and UI identical.
+
+This project includes:
+
+React components
+
+MapLibre GL layers
+
+OpenMapTiles integration
+
+Sidebar, sliders, input components
+
+Isochrone visualization
+
+Heatmaps
+
+Tile rendering
+
+Summary Score Panel
+
+Compare Mode
+
+API hooks using React Query
+
+TailwindCSS
+
+Utility hooks
+
+Folder structure and imports
+
+IMPORTANT:
+You must not simplify, remove, or skip any parts of the existing code.
+You must maintain all behaviors from the Greenfield Radar specification. 
+
+Greenfield Radar
+
+
+You must preserve all map behaviors shown in the PDF visuals. 
+
+Location_Scoring_Decisive_Insig…
+
+🔥 CONVERSION RULES
+1. Remove ALL TypeScript-specific syntax
+
+Remove all : type annotations
+
+Remove all interface declarations
+
+Remove all type imports (import type { … })
+
+Remove JSX generics
+
+Remove enums (convert to plain objects)
+
+Remove as Type assertions
+
+Remove Partial<>, Record<>, Pick<>, etc.
+
+Convert to clean JS files using .jsx extension.
+
+2. Convert all .ts and .tsx files to:
+
+.js for utilities & services
+
+.jsx for React components
+
+Example:
+
+MapContainer.tsx → MapContainer.jsx
+api.ts → api.js
+useScoreLocation.ts → useScoreLocation.js
+
+3. Replace all TS interfaces with JSDoc comments
+
+Wherever there was an interface, replace with:
+
+/**
+ * @typedef {Object} TileData
+ * @property {number} score
+ * @property {Object} stats
+ */
+
+
+This ensures devs still get IntelliSense.
+
+4. Replace generics and typed hooks
+
+Examples:
+
+useState<number>(0) → useState(0)
+
+useRef<MapLibreMap | null>(null) → useRef(null)
+
+const query = useQuery<MyType>(...) → const query = useQuery(...)
+
+5. Ensure NO logic is changed
+
+The following behaviors must remain exactly identical:
+
+Heatmap Layer
+
+Tile intensity rendered from backend score
+
+Correct color ramp
+
+Top tile highlighting
+
+Isochrone Layer
+
+Transparent polygon fill
+
+Correct boundaries
+
+POI Layer
+
+Icon categories (competitor, amenity, transit)
+
+Color-coded markers
+
+Sliders
+
+Competition, Footfall, Amenities
+
+Must send real-time numeric values to backend
+
+Compare Mode
+
+Dual pins
+
+Dual isochrones
+
+Dual heatmaps
+
+Summary comparison panel
+
+All UI behavior must stay unchanged.
+
+6. Keep all component structure exactly the same
+
+Do NOT merge components.
+Do NOT remove component boundaries.
+
+Must preserve folders:
+
+components/map
+components/ui
+hooks
+services
+context
+
+7. Fix all type-dependent errors
+
+When removing TypeScript, the agent must fix:
+
+implicit any issues
+
+missing null checks
+
+undefined variable concerns
+
+MapLibre GL JS types no longer present
+
+This means adding runtime guards where needed:
+
+if (!mapRef.current) return;
+
+8. Update all imports
+
+Remove .ts extension in imports.
+Use .js or .jsx only.
+
+9. Ensure final build compiles with:
+npm run dev
+npm run build
+
+
+with zero TypeScript dependencies.
+
+Remove from package.json:
+
+typescript
+
+ts-node
+
+@types/*
+
+10. Deliverables
+
+The AI agent must return:
+
+Fully converted JS/JSX codebase
+
+Updated folder tree
+
+Updated package.json
+
+Notes on any runtime fixes added
+
+Final checklist verifying the build runs correctly
+
+🧪 VERIFICATION CHECKLIST FOR THE AGENT
+
+After conversion, you must verify:
+
+Frontend still matches spec:
+
+✔ Target Location search
+✔ Transport mode
+✔ Time budget slider
+✔ Category selector
+✔ Priority sliders
+✔ Isochrone rendering
+✔ Tile heatmap
+✔ POI markers
+✔ Top 3 opportunities
+✔ Summary score card
+✔ Compare mode
+✔ Export icon
+✔ Clean dark sidebar UI
+✔ MapLibre + OpenMapTiles still works
+
+Include a final compliance summary.
+
+📌 FINAL INSTRUCTION TO THE AI AGENT
+
+Proceed to convert the entire project from TypeScript to JavaScript as per all rules above, while preserving 100% functionality and matching the official Greenfield Radar specification. Return the final codebase or updated files.
