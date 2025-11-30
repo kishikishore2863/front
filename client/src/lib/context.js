@@ -32,13 +32,7 @@ export async function fetchLocationContext(lat, lng, options = {}) {
 
   const area = typeof data?.area === 'object' && data.area !== null
     ? {
-        name: data.area.name ?? null,
         adminLevel: data.area.adminLevel ?? null,
-        place: data.area.place ?? null,
-        population: data.area.population ?? null,
-        approximateAreaSqKm: Number.isFinite(data.area.approximateAreaSqKm)
-          ? data.area.approximateAreaSqKm
-          : null,
       }
     : null;
 
@@ -46,12 +40,8 @@ export async function fetchLocationContext(lat, lng, options = {}) {
     ? {
         radiusMeters: Number.isFinite(data.roads.radiusMeters) ? data.roads.radiusMeters : 1500,
         totalKm: Number.isFinite(data.roads.totalKm) ? data.roads.totalKm : 0,
-        walkableKm: Number.isFinite(data.roads.walkableKm) ? data.roads.walkableKm : 0,
         cycleKm: Number.isFinite(data.roads.cycleKm) ? data.roads.cycleKm : 0,
         vehicleKm: Number.isFinite(data.roads.vehicleKm) ? data.roads.vehicleKm : 0,
-        densityPerSqKm: Number.isFinite(data.roads.densityPerSqKm)
-          ? data.roads.densityPerSqKm
-          : null,
         lengthByType: data.roads.lengthByType && typeof data.roads.lengthByType === 'object'
           ? data.roads.lengthByType
           : {},

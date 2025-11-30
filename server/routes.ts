@@ -581,16 +581,11 @@ export async function registerRoutes(
 
       const bestAdmin = scoredCandidates.length ? scoredCandidates[0] : null;
 
-      const areaSummary = bestAdmin
-        ? {
-            name: bestAdmin.element.tags?.name ?? null,
-            adminLevel: bestAdmin.element.tags?.admin_level ?? null,
-            place: bestAdmin.element.tags?.place ?? null,
-            population: bestAdmin.element.tags?.population ?? null,
-            bounds: bestAdmin.element.bounds ?? null,
-            approximateAreaSqKm: bestAdmin.boundingAreaSqKm,
-          }
-        : null;
+        const areaSummary = bestAdmin
+          ? {
+              adminLevel: bestAdmin.element.tags?.admin_level ?? null,
+            }
+          : null;
 
       const roadsQuery = `
         [out:json][timeout:40];
@@ -816,21 +811,14 @@ export async function registerRoutes(
           return acc;
         }, {});
 
-      const roadDensity =
-        areaSummary?.approximateAreaSqKm && areaSummary.approximateAreaSqKm > 0
-          ? Number((totalKm / areaSummary.approximateAreaSqKm).toFixed(3))
-          : null;
-
       return res.json({
         area: areaSummary,
         roads: {
           radiusMeters,
           totalKm: Number(totalKm.toFixed(3)),
-          walkableKm: Number(walkableKm.toFixed(3)),
           cycleKm: Number(cycleKm.toFixed(3)),
           vehicleKm: Number(vehicleKm.toFixed(3)),
           lengthByType: sortedLengths,
-          densityPerSqKm: roadDensity,
         },
         scores: {
           walkability: walkabilityScore,
