@@ -137,16 +137,6 @@ export default function LocationScoreCard({ data, loading }) {
             Access &amp; Context
           </p>
           <div className="space-y-1.5 text-sm text-foreground/80">
-            <div className="flex items-center justify-between">
-              <span>Catchment Area</span>
-              <span className="font-medium text-foreground">
-                {areaLabel ?? "—"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span>Approx. Size</span>
-              <span>{formatArea(areaInfo?.approximateAreaSqKm)}</span>
-            </div>
             {areaInfo?.adminLevel && (
               <div className="flex items-center justify-between text-muted-foreground">
                 <span>Admin Level</span>
@@ -166,18 +156,6 @@ export default function LocationScoreCard({ data, loading }) {
             <div className="flex items-center justify-between text-muted-foreground">
               <span>Vehicle Dominance</span>
               <span>{formatPercent(contextScores?.vehicleDominance)}</span>
-            </div>
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span>Walkable Network</span>
-              <span>{formatKilometers(roadsInfo?.walkableKm)}</span>
-            </div>
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span>Road Density</span>
-              <span>
-                {Number.isFinite(roadsInfo?.densityPerSqKm)
-                  ? `${roadsInfo.densityPerSqKm.toFixed(2)} km / km²`
-                  : "—"}
-              </span>
             </div>
             {transitInfo && (
               <div className="pt-2 mt-2 border-t border-dashed border-muted/60 space-y-1.5">

@@ -27,6 +27,7 @@ export const AppProvider = ({ children }) => {
   // simple tick to request nearby refetches when categories change
   const [nearbyRefreshTick, setNearbyRefreshTick] = useState(0);
   const [heatmapEnabled, setHeatmapEnabled] = useState(false);
+  const [scorecardVisible, setScorecardVisible] = useState(true);
 
   return (
     <AppContext.Provider value={{
@@ -39,7 +40,8 @@ export const AppProvider = ({ children }) => {
       plusCategories, setPlusCategories,
       competitorCategories, setCompetitorCategories,
       nearbyRefreshTick, setNearbyRefreshTick,
-      heatmapEnabled, setHeatmapEnabled,
+  heatmapEnabled, setHeatmapEnabled,
+  scorecardVisible, setScorecardVisible,
     }}>
       {children}
     </AppContext.Provider>

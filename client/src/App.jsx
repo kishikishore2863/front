@@ -17,6 +17,8 @@ import CompareModeLayer from '@/components/map/CompareModeLayer';
 import TopTilesLayer from '@/components/map/TopTilesLayer';
 import RadiusCircleLayer from '@/components/map/RadiusCircleLayer';
 import HeatmapToggleControl from '@/components/map/HeatmapToggleControl';
+import LegendControl from '@/components/map/LegendControl';
+import ScorecardToggleControl from '@/components/map/ScorecardToggleControl';
 import LocationScoreCard from '@/components/ui/LocationScoreCard';
 import { useScoreLocation } from '@/hooks/useScoreLocation';
 import { useCompareLocations } from '@/hooks/useCompareLocations';
@@ -36,6 +38,7 @@ function AppContent() {
     plusCategories,
     competitorCategories,
     heatmapEnabled,
+    scorecardVisible,
   } = useAppContext();
   
   const { data: scoreData, isLoading: scoreLoading } = useScoreLocation(
@@ -83,11 +86,13 @@ function AppContent() {
             />
           )}
           <HeatmapToggleControl className="absolute right-16 bottom-20 z-30" />
+          <ScorecardToggleControl className="absolute right-16 bottom-32 z-30" />
+          <LegendControl className="absolute left-4 bottom-4 z-30" />
         </MapContainer>
 
         {/* <Toolbar /> */}
 
-        {mode === 'scoring' && (
+        {mode === 'scoring' && scorecardVisible && (
           <div className="absolute top-4 right-4 z-30">
             <LocationScoreCard data={scoreData} loading={scoreLoading} />
           </div>
